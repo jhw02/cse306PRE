@@ -6,23 +6,6 @@
 #define MAXCHAR 1000
 
 
-char *my_strtok(char *str, const char *delim) {
-    static char *s = NULL;
-    if (str)
-        s = str;
-    if (!s)
-        return NULL;
-    char *start = s;
-    while (*s && !strchr(delim, *s)) {
-        s++;
-    }
-    if (*s) {
-        *s = '\0';
-        s++;
-    }
-    return start;
-}
-
 int main()
 {
 
@@ -34,6 +17,23 @@ int main()
         printf("No file found fucking cunt\n");
         return 1;
     }
+
+
+    //-f
+    char *firstrow =fgets(row, MAXCHAR, fp);
+    char *token = strtok(firstrow, ",");
+    int iterator =0;
+    while( token != NULL ) {
+        //printf("%s\n", token );
+        iterator ++;
+        token = strtok(NULL, ",");
+    }
+
+    printf("%d\n",iterator);
+
+
+
+    // -r
     int count=1;
     int c;
     fgets(row, MAXCHAR, fp);
@@ -41,15 +41,24 @@ int main()
         if (c == '\n') // Increment count if this character is newline
             count = count + 1;
 
-    // fgets(row, MAXCHAR, fp);
 
-    printf("%d",count);
+    printf("%d\n",count);
+
+
+    //-h
+    // read and discard the header line
+    printf("%s\n", row);
+    fgets((char *) MAXCHAR, MAXCHAR, fp);
+    printf("%s\n", row);
+
+    // if not used then dont discard
+
 
 
 
     const char delimiter[] = ",";
-// if its not  "' "
-    char *token = my_strtok(row, delimiter);
+
+    //char *token = my_strtok(row, delimiter);
     char *words[]={};
     words[0]="haha";
     words[1]="lol";
@@ -57,8 +66,8 @@ int main()
     char *newwords[]={};
     newwords[0]=words[0];
     //printf(newwords[0]);
-    token = my_strtok(NULL, delimiter);
-    token = my_strtok(NULL, delimiter);
+    //token = my_strtok(NULL, delimiter);
+    //token = my_strtok(NULL, delimiter);
     //printf("%s\n", token);
 
 
