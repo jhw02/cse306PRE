@@ -5,34 +5,55 @@
 #include <stdbool.h>
 #define MAXCHAR 1000
 
-int main() {
-  // Substitute the file_path string
-  // with full path of CSV file
-  FILE *fp = fopen("05020004-eng.csv", "r");
+int main(int argc, char *argv[]) {
 
-  char name[50];
-  int accountno, amount;
+  char f[] = "-f\0";
+  char r[] = "-r\0";
+  char h[] = "-h\0";
 
+  FILE *fp = fopen(argv[argc - 1], "r");
+
+  // Error in file opening
   if (!fp) {
-    // Error in file opening
     printf("Can't open file\n");
     return 0;
   }
 
-  // Asking user input for the
-  // new record to be added
-  printf("\nEnter Account Holder Name\n");
-  scanf("%s", &name);
-  printf("\nEnter Account Number\n");
-  scanf("%d", &accountno);
-  printf("\nEnter Available Amount\n");
-  scanf("%d", &amount);
+  for (int i = 0; i < argc; i++) {
+    // printf("argv[%d] is %s\n", i, argv[i]);
 
-  // Saving data in file
-  fprintf(fp, "%s, %d, %d\n", name, accountno, amount);
+    //-f
+    if (!strcmp(argv[i], f)) {
+      char row[MAXCHAR];
+      char *firstrow = fgets(row, MAXCHAR, fp);
+      char *token = strtok(firstrow, ",");
+      int iterator = 0;
+      while (token != NULL) {
+        // printf("%s\n", token );
+        iterator++;
+        token = strtok(NULL, ",");
+      }
 
-  printf("\nNew Account added to record");
+      printf("%d\n", iterator);
 
+    } //-r
+    else if (!strcmp(argv[i], r)) {
+      char row[MAXCHAR];
+      int count = 0;
+      int c;
+      // fgets(row, MAXCHAR, fp);
+      for (c = getc(fp); c != EOF; c = getc(fp))
+        if (c == '\n') // Increment count if this character is newline
+          count = count + 1;
+      printf("%d\n", count);
+    } //-h
+    else if (!strcmp(argv[i], h)) {
+      char row[MAXCHAR];
+      printf("%s\n", row);
+      // fgets((char *)MAXCHAR, MAXCHAR, fp);
+      printf("%s\n", row);
+    }
+  }
   fclose(fp);
   return 0;
 }
