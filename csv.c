@@ -20,11 +20,10 @@ int main(int argc, char *argv[]) {
   }
 
   for (int i = 0; i < argc; i++) {
-    printf("argv[%d] is %s\n", i, argv[i]);
-    char *input = argv[i];
+    // printf("argv[%d] is %s\n", i, argv[i]);
 
     //-f
-    if (input == f) {
+    if (!strcmp(argv[i], f)) {
       char row[MAXCHAR];
       char *firstrow = fgets(row, MAXCHAR, fp);
       char *token = strtok(firstrow, ",");
@@ -36,21 +35,22 @@ int main(int argc, char *argv[]) {
       }
 
       printf("%d\n", iterator);
+
     } //-r
-    else if (input == r) {
+    else if (!strcmp(argv[i], r)) {
       char row[MAXCHAR];
-      int count = 1;
+      int count = 0;
       int c;
-      fgets(row, MAXCHAR, fp);
+      // fgets(row, MAXCHAR, fp);
       for (c = getc(fp); c != EOF; c = getc(fp))
         if (c == '\n') // Increment count if this character is newline
           count = count + 1;
       printf("%d\n", count);
     } //-h
-    else if (input == h) {
+    else if (!strcmp(argv[i], h)) {
       char row[MAXCHAR];
       printf("%s\n", row);
-      fgets((char *)MAXCHAR, MAXCHAR, fp);
+      // fgets((char *)MAXCHAR, MAXCHAR, fp);
       printf("%s\n", row);
     }
   }
