@@ -6,8 +6,45 @@
 #define MAXCHAR 1000
 
 
-int main()
-{
+int fvalue(){
+    FILE *fp;
+    fp = fopen("05020004-eng.csv", "r");
+    char row[MAXCHAR];
+    char *firstrow = fgets(row, MAXCHAR, fp);
+    int iterator =0;
+    char *token = strtok(firstrow, ",");
+    while( token != NULL ) {
+        //printf("%s\n", token );
+        iterator ++;
+        token = strtok(NULL, ",");
+    }
+
+    //printf("%d\n",iterator);
+return iterator;
+
+}
+
+int rvalue( ){
+    // -r
+    FILE *fp;
+    fp = fopen("05020004-eng.csv", "r");
+    char row[MAXCHAR];
+    int count=1;
+
+    fgets(row, MAXCHAR, fp);
+
+
+    for (int c = getc(fp); c != EOF; c = getc(fp)) {
+        if (c == '\n') {// Increment count if this character is newline
+            count = count + 1;
+        }
+    }
+
+
+    return count;
+
+}
+int main() {
 
     FILE *fp;
     fp = fopen("05020004-eng.csv", "r");
@@ -19,65 +56,98 @@ int main()
     }
 
 
-    //-f
-    char *firstrow =fgets(row, MAXCHAR, fp);
-    char *token = strtok(firstrow, ",");
-    int iterator =0;
-    while( token != NULL ) {
-        //printf("%s\n", token );
-        iterator ++;
-        token = strtok(NULL, ",");
-    }
+    //-min //-max 
+    int input = 0; //user input of what field they want
+    char *firstrow = fgets(row, MAXCHAR, fp);
+    firstrow = fgets(firstrow, MAXCHAR, fp);
+    char *token2 = strtok(firstrow, ",");
+    int max = 0;
+    int min = 999999999;
+    for (int i = 0; i < 810; i++) {
 
-    printf("%d\n",iterator);
+        firstrow = fgets(firstrow, MAXCHAR, fp);
+        token2 = strtok(firstrow, ",");
+        for (int j = 1; j < input; j++) {
+            token2 = strtok(NULL, ",");
+        }
+        if (atoi(token2) > max) {
+            max = atoi(token2);
+        }
+        if (atoi(token2) < min) {
+            min = atoi(token2);
+        }
+
+        //printf("%s\n", token2);
+        //printf("\n");
+
+
+    }
+    printf("The Max value of 0 is %d\n", max);
+    printf("The Min value of 0 is %d\n", min);
+
+
+    //-f
+    int k = fvalue();
+    printf("%d\n",k);
 
 
 
     // -r
-    int count=1;
-    int c;
-    fgets(row, MAXCHAR, fp);
-    for (c = getc(fp); c != EOF; c = getc(fp))
-        if (c == '\n') // Increment count if this character is newline
-            count = count + 1;
+    int j = rvalue();
+    printf("%d\n",j);
 
-
-    printf("%d\n",count);
-
-
-    //-h
-    // read and discard the header line
-    printf("%s\n", row);
-    fgets((char *) MAXCHAR, MAXCHAR, fp);
-    printf("%s\n", row);
-
-    // if not used then dont discard
-
-
-
-
-    const char delimiter[] = ",";
-
-    //char *token = my_strtok(row, delimiter);
-    char *words[]={};
-    words[0]="haha";
-    words[1]="lol";
-    words[0]="adibro";
-    char *newwords[]={};
-    newwords[0]=words[0];
-    //printf(newwords[0]);
-    //token = my_strtok(NULL, delimiter);
-    //token = my_strtok(NULL, delimiter);
-    //printf("%s\n", token);
-
-
-//    while (feof(fp) != true)
-//    {
+//    //-h
+//    // read and discard the header line
+//    //printf("%s\n", row);
+//    fgets((char *) MAXCHAR, MAXCHAR, fp);
+//    //printf("%s\n", row);
 //
-//        printf("Row: %s", row);
+//    // if not used then dont discard
+//
+//
+//    //-max 0
+//    firstrow =fgets(row, MAXCHAR, fp);
+//    //fgets(firstrow, MAXCHAR, fp);
+//    printf("haha\n");
+//    c=getc(fp);
+//    c=getc(fp);
+//    c=getc(fp);
+//    c=getc(fp);
+//    c=getc(fp);
+//    printf("%d",c);
+//    token = strtok(firstrow, ",");
+//    for (c = getc(fp); c != EOF; c = getc(fp)) {
+//
+//        if (c == '\n') { // Increment count if this character is newline
+//            printf(row);
+//            count++;
+//            fgets(row, MAXCHAR, fp);
+//            printf("%s", token);
+//            printf(row);
+//        }
 //    }
+//
+//
+//
+//
+//
+//    //char *token = my_strtok(row, delimiter);
+//    char *words[]={};
+//    words[0]="haha";
+//    words[1]="lol";
+//    words[0]="adibro";
+//    char *newwords[]={};
+//    newwords[0]=words[0];
+//    //printf(newwords[0]);
+//    //token = my_strtok(NULL, delimiter);
+//    //token = my_strtok(NULL, delimiter);
+//    //printf("%s\n", token);
+//
+//
 
-
-    fclose(fp);
-    return 0;
+//
+//
+//    fclose(fp);
+//    return 0;
+//}
 }
