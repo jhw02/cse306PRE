@@ -46,14 +46,14 @@ int main(int argc, char *argv[]) {
   char mea[] = "-mean\0";
   char rec[] = "-records\0";
 
-  FILE *fp = fopen(argv[argc - 1], "r");
-
-  // Error in file opening
-  if (!fp) {
-    printf("Can't open file\n");
-    return 0;
-  }
   for (int i = 0; i < argc; i++) {
+    FILE *fp = fopen(argv[argc - 1], "r");
+
+    // Error in file opening
+    if (!fp) {
+      printf("Can't open file\n");
+      return 1;
+    }
     // printf("argv[%d] is %s\n", i, argv[i]);
 
     //-f
@@ -142,7 +142,6 @@ int main(int argc, char *argv[]) {
           max = atoi(token2);
         }
       }
-      i++;
       printf("The Max value of %d is %d\n", input, max);
     } // min
     else if (!strcmp(argv[i], mi)) {
@@ -203,7 +202,6 @@ int main(int argc, char *argv[]) {
           min = atoi(token2);
         }
       }
-      i++;
       printf("The Min value of %d is %d\n", input, min);
     } // mean
     else if (!strcmp(argv[i], mea)) {
@@ -263,7 +261,6 @@ int main(int argc, char *argv[]) {
         totoal_nu = totoal_nu + 1.0;
         sum = sum + atof(token2);
       }
-      i++;
       float result = sum / totoal_nu;
       printf("The Mean value of %d is %f\n", input, result);
     }
@@ -329,10 +326,9 @@ int main(int argc, char *argv[]) {
 
         //////
       }
-      i++;
-      i++;
     }
+    fclose(fp);
   }
-  fclose(fp);
+
   return 0;
 }
