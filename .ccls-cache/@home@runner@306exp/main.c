@@ -15,11 +15,22 @@ int count_row(char *filename) {
   return count;
 }
 bool number_check(char *str) {
+
   bool result = true;
-  for (int i = 0; i < strlen(str); i++) {
-    if (!isdigit(str[i])) {
-      result = false;
-    }
+  int sta = 0;
+  int b = (int)str[5] ;
+  for (int i = 0; str[i] != '\0'; i++) {
+    if((int)str[i] > 39){
+      if (str[i] == '.') {
+        if (sta == 0) {
+          sta = 1;
+        } else {
+  
+          result = false;
+        }
+      } else if (!isdigit(str[i])) {
+        result = false;
+      }}
   }
   return result;
 }
