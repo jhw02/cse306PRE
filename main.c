@@ -36,7 +36,8 @@ bool number_check(char *str) {
   return result;
 }
 int input_finder(char **header_list, int list_length, char *input_header) {
-  int input = 0;
+  int ex = 0;
+  int input;
   for (int i = 0; i < list_length; i++) {
     if (i + 1 == list_length) {
       int n = 0;
@@ -44,21 +45,28 @@ int input_finder(char **header_list, int list_length, char *input_header) {
 
         if (header_list[i][j] != input_header[j]) {
           n = 1;
+          break;
         }
       }
       if (n == 0) {
         input = i;
+        ex = 1;
         break;
       }
     }
 
     if (!strcmp(input_header, header_list[i])) {
       input = i;
+      ex = 1;
       break;
     }
   }
 
-  return input;
+  if (ex == 0) {
+    exit(EXIT_FAILURE);
+  } else {
+    return input;
+  }
 }
 
 int main(int argc, char *argv[]) {
