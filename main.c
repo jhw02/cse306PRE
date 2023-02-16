@@ -14,6 +14,15 @@ int count_row(char *filename) {
   fclose(fp);
   return count;
 }
+bool number_check(char *str) {
+  bool result = true;
+  for (int i = 0; i < strlen(str); i++) {
+    if (!isdigit(str[i])) {
+      result = false;
+    }
+  }
+  return result;
+}
 
 int main(int argc, char *argv[]) {
 
@@ -66,9 +75,53 @@ int main(int argc, char *argv[]) {
 
       int max = 0;
       int file_row_num = count_row(argv[argc - 1]);
+      char first_letter;
+      char last_letter;
+
+      // state to see if loop should be executed for find quotation mark
+      int sw = 0;
+
       for (int z = 0; z < file_row_num; z++) {
         firstrow = fgets(firstrow, MAXCHAR, fp);
-        token2 = strtok(firstrow, ",");
+        for (int n = 0; n < input + 1; n++) {
+          if (n == 0) {
+            token2 = strtok(firstrow, ",");
+
+            first_letter = token2[0];
+            last_letter = token2[strlen(token2) - 1];
+            // see if end and begin quotation mark exist
+            if ((first_letter == '"') && last_letter != '"') {
+              sw = 1;
+            }
+          } else {
+            if (sw == 0) {
+              token2 = strtok(NULL, ",");
+              first_letter = token2[0];
+              last_letter = token2[strlen(token2) - 1];
+              // see if end and begin quotation mark exist
+              if ((first_letter == '"') && last_letter != '"') {
+                sw = 1;
+              }
+            }
+            // case of end quotation mark doesn't exit
+            if (sw == 1) {
+              // loop strtok() until find the end quotation mark
+              while (sw == 1) {
+                token2 = strtok(NULL, ",");
+                last_letter = token2[strlen(token2) - 1];
+                // if end quotaion mark found, set sw=0 for exiting the loop
+                if (last_letter == '"') {
+                  sw = 0;
+                }
+              }
+            }
+          }
+        }
+
+        if (!number_check(token2)) {
+          printf("No numeric data\n");
+          exit(EXIT_FAILURE);
+        }
 
         if (atoi(token2) > max) {
           max = atoi(token2);
@@ -126,8 +179,11 @@ int main(int argc, char *argv[]) {
             }
           }
         }
+        if (!number_check(token2)) {
+          printf("No numeric data\n");
+          exit(EXIT_FAILURE);
+        }
 
-        printf("%s\n", token2);
         if (atoi(token2) < min) {
           min = atoi(token2);
         }
