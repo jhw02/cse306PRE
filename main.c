@@ -35,6 +35,31 @@ bool number_check(char *str) {
   }
   return result;
 }
+int input_finder(char **header_list, int list_length, char *input_header) {
+  int input = 0;
+  for (int i = 0; i < list_length; i++) {
+    if (i + 1 == list_length) {
+      int n = 0;
+      for (int j = 0; j < strlen(input_header); j = j + sizeof(char)) {
+
+        if (header_list[i][j] != input_header[j]) {
+          n = 1;
+        }
+      }
+      if (n == 0) {
+        input = i;
+        break;
+      }
+    }
+
+    if (!strcmp(input_header, header_list[i])) {
+      input = i;
+      break;
+    }
+  }
+
+  return input;
+}
 
 int main(int argc, char *argv[]) {
 
@@ -45,6 +70,10 @@ int main(int argc, char *argv[]) {
   char mi[] = "-min\0";
   char mea[] = "-mean\0";
   char rec[] = "-records\0";
+
+  char **h_headers = malloc(MAXCHAR);
+  int header_num = 0;
+  int h_sw = 0;
 
   for (int i = 0; i < argc; i++) {
     FILE *fp = fopen(argv[argc - 1], "r");
@@ -80,11 +109,26 @@ int main(int argc, char *argv[]) {
       printf("%d\n", count);
     } //-h
     else if (!strcmp(argv[i], h)) {
+      char row[MAXCHAR];
+      char *firstrow = fgets(row, MAXCHAR, fp);
+      char *token2 = strtok(firstrow, ",");
+
+      while (token2 != NULL) {
+        h_headers[header_num] = token2;
+        header_num++;
+        token2 = strtok(NULL, ",");
+      }
+      h_sw = 1;
 
     } // max
     else if (!strcmp(argv[i], ma)) {
       char row[MAXCHAR];
-      int input = atoi(argv[i + 1]); // user input field
+      int input; // user input field
+      if (h_sw == 1) {
+        input = input_finder(h_headers, header_num, argv[i + 1]);
+      } else {
+        input = atoi(argv[i + 1]);
+      }
       char *firstrow = fgets(row, MAXCHAR, fp);
       char *token2 = strtok(firstrow, ",");
 
@@ -146,7 +190,12 @@ int main(int argc, char *argv[]) {
     } // min
     else if (!strcmp(argv[i], mi)) {
       char row[MAXCHAR];
-      int input = atoi(argv[i + 1]); // user input field
+      int input; // user input field
+      if (h_sw == 1) {
+        input = input_finder(h_headers, header_num, argv[i + 1]);
+      } else {
+        input = atoi(argv[i + 1]);
+      }
       char *firstrow = fgets(row, MAXCHAR, fp);
       char *token2 = strtok(firstrow, ",");
       int min = 999999999;
@@ -206,7 +255,12 @@ int main(int argc, char *argv[]) {
     } // mean
     else if (!strcmp(argv[i], mea)) {
       char row[MAXCHAR];
-      int input = atoi(argv[i + 1]); // user input field
+      int input; // user input field
+      if (h_sw == 1) {
+        input = input_finder(h_headers, header_num, argv[i + 1]);
+      } else {
+        input = atoi(argv[i + 1]);
+      }
       char *firstrow = fgets(row, MAXCHAR, fp);
       char *token2 = strtok(firstrow, ",");
       float sum = 0.0;
@@ -267,7 +321,12 @@ int main(int argc, char *argv[]) {
     // record
     else if (!strcmp(argv[i], rec)) {
       char row[MAXCHAR];
-      int input = atoi(argv[i + 1]); // user input field
+      int input; // user input field
+      if (h_sw == 1) {
+        input = input_finder(h_headers, header_num, argv[i + 1]);
+      } else {
+        input = atoi(argv[i + 1]);
+      }
       char *firstrow = fgets(row, MAXCHAR, fp);
 
       char *token2 = strtok(firstrow, ",");
