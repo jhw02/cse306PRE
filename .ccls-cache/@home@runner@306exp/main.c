@@ -127,6 +127,7 @@ int main(int argc, char *argv[]) {
           }
         }
 
+        printf("%s\n", token2);
         if (atoi(token2) < min) {
           min = atoi(token2);
         }
