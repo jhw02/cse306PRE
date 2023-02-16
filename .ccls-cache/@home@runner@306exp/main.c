@@ -44,6 +44,7 @@ int main(int argc, char *argv[]) {
   char ma[] = "-max\0";
   char mi[] = "-min\0";
   char mea[] = "-mean\0";
+  char rec[] = "-records\0";
 
   FILE *fp = fopen(argv[argc - 1], "r");
 
@@ -264,7 +265,72 @@ int main(int argc, char *argv[]) {
       }
       i++;
       float result = sum / totoal_nu;
-      printf("The Min value of %d is %f\n", input, result);
+      printf("The Mean value of %d is %f\n", input, result);
+    }
+    // record
+    else if (!strcmp(argv[i], rec)) {
+      char row[MAXCHAR];
+      int input = atoi(argv[i + 1]); // user input field
+      char *firstrow = fgets(row, MAXCHAR, fp);
+
+      char *token2 = strtok(firstrow, ",");
+      int file_row_num = count_row(argv[argc - 1]);
+      char first_letter;
+      char last_letter;
+
+      // state to see if loop should be executed for find quotation mark
+      int sw = 0;
+
+      for (int z = 0; z < file_row_num; z++) {
+
+        firstrow = fgets(firstrow, MAXCHAR, fp);
+        char *cpy_row;
+        cpy_row = (char *)malloc(MAXCHAR);
+        strcpy(cpy_row, firstrow);
+
+        for (int n = 0; n < input + 1; n++) {
+          if (n == 0) {
+            token2 = strtok(firstrow, ",");
+
+            first_letter = token2[0];
+            last_letter = token2[strlen(token2) - 1];
+            // see if end and begin quotation mark exist
+            if ((first_letter == '"') && last_letter != '"') {
+              sw = 1;
+            }
+          } else {
+            if (sw == 0) {
+              token2 = strtok(NULL, ",");
+              first_letter = token2[0];
+              last_letter = token2[strlen(token2) - 1];
+              // see if end and begin quotation mark exist
+              if ((first_letter == '"') && last_letter != '"') {
+                sw = 1;
+              }
+            }
+            // case of end quotation mark doesn't exit
+            if (sw == 1) {
+              // loop strtok() until find the end quotation mark
+              while (sw == 1) {
+                token2 = strtok(NULL, ",");
+                last_letter = token2[strlen(token2) - 1];
+                // if end quotaion mark found, set sw=0 for exiting the loop
+                if (last_letter == '"') {
+                  sw = 0;
+                }
+              }
+            }
+          }
+        }
+
+        if (atof(token2) == atof(argv[i + 2])) {
+          printf("%s\n", cpy_row);
+        }
+
+        //////
+      }
+      i++;
+      i++;
     }
   }
   fclose(fp);
