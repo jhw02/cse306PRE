@@ -1,9 +1,19 @@
+#include <ctype.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <stdbool.h>
 #define MAXCHAR 1000
+
+int count_row(char *filename) {
+  FILE *fp = fopen(filename, "r");
+  int count = 0;
+  for (char i = getc(fp); i != EOF; i = getc(fp))
+    if (i == '\n')
+      count = count + 1;
+  fclose(fp);
+  return count;
+}
 
 int main(int argc, char *argv[]) {
 
@@ -19,7 +29,6 @@ int main(int argc, char *argv[]) {
     printf("Can't open file\n");
     return 0;
   }
-
   for (int i = 0; i < argc; i++) {
     // printf("argv[%d] is %s\n", i, argv[i]);
 
@@ -39,10 +48,8 @@ int main(int argc, char *argv[]) {
 
     } //-r
     else if (!strcmp(argv[i], r)) {
-      char row[MAXCHAR];
       int count = 0;
       int c;
-      // fgets(row, MAXCHAR, fp);
       for (c = getc(fp); c != EOF; c = getc(fp))
         if (c == '\n') // Increment count if this character is newline
           count = count + 1;
@@ -58,14 +65,11 @@ int main(int argc, char *argv[]) {
       char *token2 = strtok(firstrow, ",");
 
       int max = 0;
-      for (int z = 0; z < 810; z++) {
-        // char z = getc(fp); z != EOF; z = getc(fp)
+      int file_row_num = count_row(argv[argc - 1]);
+      for (int z = 0; z < file_row_num; z++) {
         firstrow = fgets(firstrow, MAXCHAR, fp);
         token2 = strtok(firstrow, ",");
-        printf("%s\n", token2);
-        for (int j = 1; j < input; j++) {
-          token2 = strtok(NULL, ",");
-        }
+
         if (atoi(token2) > max) {
           max = atoi(token2);
         }
@@ -79,13 +83,50 @@ int main(int argc, char *argv[]) {
       char *firstrow = fgets(row, MAXCHAR, fp);
       char *token2 = strtok(firstrow, ",");
       int min = 999999999;
-      for (int z = 0; z < 810; z++) {
+      int file_row_num = count_row(argv[argc - 1]);
+      char first_letter;
+      char last_letter;
 
+      // state to see if loop should be executed for find quotation mark
+      int sw = 0;
+
+      for (int z = 0; z < file_row_num; z++) {
         firstrow = fgets(firstrow, MAXCHAR, fp);
-        token2 = strtok(firstrow, ",");
-        for (int j = 1; j < input; j++) {
-          token2 = strtok(NULL, ",");
+        for (int n = 0; n < input + 1; n++) {
+          if (n == 0) {
+            token2 = strtok(firstrow, ",");
+
+            first_letter = token2[0];
+            last_letter = token2[strlen(token2) - 1];
+            // see if end and begin quotation mark exist
+            if ((first_letter == '"') && last_letter != '"') {
+              sw = 1;
+            }
+          } else {
+            if (sw == 0) {
+              token2 = strtok(NULL, ",");
+              first_letter = token2[0];
+              last_letter = token2[strlen(token2) - 1];
+              // see if end and begin quotation mark exist
+              if ((first_letter == '"') && last_letter != '"') {
+                sw = 1;
+              }
+            }
+            // case of end quotation mark doesn't exit
+            if (sw == 1) {
+              // loop strtok() until find the end quotation mark
+              while (sw == 1) {
+                token2 = strtok(NULL, ",");
+                last_letter = token2[strlen(token2) - 1];
+                // if end quotaion mark found, set sw=0 for exiting the loop
+                if (last_letter == '"') {
+                  sw = 0;
+                }
+              }
+            }
+          }
         }
+
         if (atoi(token2) < min) {
           min = atoi(token2);
         }
